@@ -36,6 +36,19 @@ function S.MayOpen(unit, citizenid)
 end
 
 ---The stash id an inventory opens for a unit.
+---May this job search units? (type, duty and grade from Config.Search)
+function S.MayLaw(job)
+    local c = Config.Search
+    if not c.enabled or not job then return false end
+    local def = LXRShared.Jobs[job.name]
+    if not def then return false end
+    local ok = false
+    for _, t in ipairs(c.jobTypes) do if def.type == t then ok = true end end
+    if not ok then return false end
+    if c.onDuty and not job.onduty then return false end
+    return (tonumber(job.grade) or 0) >= (c.minGrade or 0)
+end
+
 function S.StashId(unit) return ('storage:%s:%d'):format(unit.yard, unit.no) end
 
 ---Upgrade cost: the rent difference for the days left (never below one day of the new size).

@@ -25,7 +25,7 @@ lua54 'yes'
 name 'lxr-storage'
 author 'iBoss21 / LXRCore'
 description 'LXRCore v3 storage: rented lock-ups by the day — sizes, keys, combinations, upgrades, the keeper padlocks and clears'
-version '3.0.0'
+version '3.1.0'
 repository 'https://github.com/LXRCore/lxr-storage'
 
 shared_scripts {

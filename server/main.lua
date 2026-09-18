@@ -182,6 +182,27 @@ LXR.RPC.Register('lxr-storage:enter', function(src, yardId, no, code)
     return true
 end)
 
+---the law at the door: search a rented unit; the tenant hears of it
+LXR.RPC.Register('lxr-storage:search', function(src, yardId, no)
+    if limited(src) then return false, 'rate' end
+    local P, yard = player(src), S.Yard(yardId)
+    local u = yard and units[yard.id] and units[yard.id][tonumber(no) or 0]
+    if not P or not u then return false, 'invalid' end
+    if not S.MayLaw(P.PlayerData.job) then LXRCore.Log.exploit(src, 'storage search without the law', { yard = yardId }) return false, 'not_law' end
+    if not near(src, yard.door) then return false, 'too_far' end
+    if not u.citizenid then return false, 'not_rented' end
+    if GetResourceState('lxr-inventory') ~= 'started' then return false, 'invalid' end
+    local sz = Config.Sizes[u.size]
+    exports['lxr-inventory']:OpenInventory(src, 'stash', S.StashId(u), { label = ('%s · %s %d · %s'):format(yard.label, Lang:t('ui.unit'), u.no, Lang:t('ui.search')), slots = sz.slots, weight = sz.weight })
+    if Config.Search.tellTenant then
+        local T = LXRCore.Functions.GetPlayerByCitizenId(u.citizenid)
+        if T then LXRCore.Notify(T.PlayerData.source, Lang:t('info.searched', { yard = yard.label, no = u.no }), 'info') end
+    end
+    LXRCore.Log.info('storage', 'unit searched by the law', { source = src, citizenid = P.PlayerData.citizenid, yard = yard.id, no = u.no, tenant = u.citizenid })
+    LXRCore.Emit('lxr:storage:searched', nil, src, yard.id, u.no, u.citizenid)
+    return true
+end)
+
 ---which units at a yard may I open (for the door's prompt list)
 LXR.RPC.Register('lxr-storage:doors', function(src, yardId)
     local P, yard = player(src), S.Yard(yardId)
@@ -189,7 +210,13 @@ LXR.RPC.Register('lxr-storage:doors', function(src, yardId)
     local cid, now, out = P.PlayerData.citizenid, os.time(), {}
     for no, u in pairs(units[yard.id] or {}) do if S.MayOpen(u, cid) then out[#out + 1] = { no = no, state = S.State(u, now), mine = u.citizenid == cid } end end
     table.sort(out, function(a, b) return a.no < b.no end)
-    return true, out
+    local law = nil
+    if S.MayLaw(P.PlayerData.job) then
+        law = {}
+        for no, u in pairs(units[yard.id] or {}) do if u.citizenid then law[#law + 1] = { no = no, size = u.size, tenant = nameOf(u.citizenid) } end end
+        table.sort(law, function(a, b) return a.no < b.no end)
+    end
+    return true, out, law
 end)
 
 -- rent runs on the clock: the hour tick pads nothing, it only clears what is a month unpaid

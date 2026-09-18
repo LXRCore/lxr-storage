@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.0 — 2026-09-18
+
+* The law may search rented units from the door (`Config.Search`); tenant told, logged, `lxr:storage:searched`.
+
 ## 3.0.0 — 2026-09-18
 
 First build, on the LXRCore v3 native API.

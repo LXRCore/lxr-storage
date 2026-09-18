@@ -43,7 +43,7 @@ end)
 
 -- the door: a prompt that lists what you may open, or asks for a combination
 local function atDoor(yard)
-    local ok, list = LXR.RPC.Server('lxr-storage:doors', yard.id)
+    local ok, list, law = LXR.RPC.Server('lxr-storage:doors', yard.id)
     if not ok then return end
     local options = {}
     for _, u in ipairs(list) do
@@ -59,6 +59,19 @@ local function atDoor(yard)
             if not ok2 then toast('error.' .. tostring(err), 'error') end
         end)
     end }
+    if law then
+        options[#options + 1] = { label = Lang:t('ui.search'), onSelect = function()
+            local items = {}
+            for _, u in ipairs(law) do
+                items[#items + 1] = { label = ('%s %d · %s · %s'):format(Lang:t('ui.unit'), u.no, Lang:t('ui.size_' .. u.size), u.tenant or '?'), onSelect = function()
+                    local ok2, err = LXR.RPC.Server('lxr-storage:search', yard.id, u.no)
+                    if not ok2 then toast('error.' .. tostring(err), 'error') end
+                end }
+            end
+            if #items == 0 then return toast('error.not_rented', 'error') end
+            exports['lxr-nui']:Menu({ title = Lang:t('ui.search'), items = items }, function() end)
+        end }
+    end
     exports['lxr-nui']:Menu({ title = yard.label, items = options }, function() end)
 end
 

@@ -66,5 +66,11 @@ Config.Rent = {
     upgradeKeepsDays = true,     -- moving to a bigger unit keeps the paid days (the difference is charged)
 }
 
+-- ████████████████████████████████████████████████████████████████████████████████
+-- ████████████████████████ THE LAW ═══════════════════════════════════════════════
+-- ████████████████████████████████████████████████████████████████████████████████
+-- a lawman on duty may search any rented unit from the door; the tenant is told, the search is logged
+Config.Search = { enabled = true, jobTypes = { 'leo', 'federal' }, minGrade = 1, onDuty = true, tellTenant = true }
+
 Config.Security = { rateLimit = { windowMs = 2000, burst = 6 }, maxDistance = 4.0, promptDistance = 2.5 }
 Config.Debug = { printBanner = true, log = true }

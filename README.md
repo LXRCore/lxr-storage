@@ -16,7 +16,8 @@ Every unit is an lxr-inventory stash; the keeper's book is this resource.
 * **The book** — every unit as a tile: free, yours (days left), taken, or a key you hold. Rent 1–`maxDays` days, extend, set or remove a 3–6 digit combination, hand a key to the nearest player (up to `keys`), take a key back, move to a bigger unit (the rent difference for the days left; the goods move with you), give the unit up.
 * **The door** — a menu of the units you may open, or *open with a combination* for anyone who was told the numbers.
 * **The clock** — `paid` → `locked` (no access for `graceDays`) → `cleared` (emptied, free again).
-* **Events** — `lxr:storage:rented`, `lxr:storage:opened`.
+* **The law** — a lawman on duty (`Config.Search`: job types, minimum grade) may search any rented unit from the door; the tenant is told, the search is logged and `lxr:storage:searched` is emitted.
+* **Events** — `lxr:storage:rented`, `lxr:storage:opened`, `lxr:storage:searched`.
 
 ## Install
 
