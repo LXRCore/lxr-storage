@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `lxr_storage_units` (
 ]])
 
 local function save(u)
-    LXRCore.DB.UpdateAsync('INSERT INTO lxr_storage_units (yard, no, size, citizenid, until_, code, keys) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE size = VALUES(size), citizenid = VALUES(citizenid), until_ = VALUES(until_), code = VALUES(code), keys = VALUES(keys)',
+    LXRCore.DB.UpdateAsync('INSERT INTO lxr_storage_units (yard, no, size, citizenid, until_, code, `keys`) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE size = VALUES(size), citizenid = VALUES(citizenid), until_ = VALUES(until_), code = VALUES(code), `keys` = VALUES(`keys`)',
         { u.yard, u.no, u.size, u.citizenid, u.until_ or 0, u.code, json.encode(u.keys or {}) })
 end
 
@@ -54,7 +54,7 @@ CreateThread(function()
         local no = 0
         for _, sz in ipairs(S.SizeOrder()) do for _ = 1, (y.units[sz.id] or 0) do no = no + 1 units[y.id][no] = { yard = y.id, no = no, size = sz.id, keys = {} } end end
     end
-    local rows = LXRCore.DB.Query('SELECT yard, no, size, citizenid, until_, code, keys FROM lxr_storage_units') or {}
+    local rows = LXRCore.DB.Query('SELECT yard, no, size, citizenid, until_, code, `keys` FROM lxr_storage_units') or {}
     for _, r in ipairs(rows) do
         local u = units[r.yard] and units[r.yard][r.no]
         if u then u.citizenid = r.citizenid u.until_ = r.until_ u.code = r.code u.keys = json.decode(r.keys or '[]') or {} u.size = r.size or u.size end
