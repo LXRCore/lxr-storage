@@ -103,7 +103,7 @@ CreateThread(function()
         exports['lxr-interact']:AddPoint('lxr-storage:door:' .. y.id, y.door, { label = Lang:t('ui.units'), distance = Config.Security.promptDistance, options = { { label = Lang:t('ui.open_unit'), key = 'J', onSelect = function() atDoor(y) end } } })
         if y.blip then
             local b = N(0x554D9D53F696D002, 1664425300, y.keeper.coords.x, y.keeper.coords.y, y.keeper.coords.z)
-            if b and b ~= 0 then N(0x74F74D3207ED525C, b, joaat('blip_shop_store'), true) N(0x9CB1A1623062F402, b, y.label) end
+            if b and b ~= 0 then N(0x74F74D3207ED525C, b, joaat('blip_shop_store'), true) if GetResourceState('lxr-mapcolor') == 'started' then pcall(function() N(0x662D364ABF16DE2F, b, exports['lxr-mapcolor']:modifier('storage')) end) end N(0x9CB1A1623062F402, b, y.label) end
         end
     end
     while true do
