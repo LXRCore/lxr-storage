@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.0.0 — 2026-09-19
+* LXRCore v3 release line: every resource ships as 3.0.0 from here (the entries below are the road to it).
+
 ## 3.1.0 — 2026-09-18
 
 * The law may search rented units from the door (`Config.Search`); tenant told, logged, `lxr:storage:searched`.
